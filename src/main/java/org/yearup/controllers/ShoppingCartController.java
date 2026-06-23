@@ -3,6 +3,8 @@ package org.yearup.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.User;
@@ -14,6 +16,7 @@ import org.yearup.service.UserService;
 import java.security.Principal;
 
 @RestController
+@RequestMapping("/cart")
 @PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
 public class ShoppingCartController
@@ -29,16 +32,13 @@ public class ShoppingCartController
     }
 
     // each method in this controller requires a Principal object as a parameter
+    @GetMapping
     public ShoppingCart getCart(Principal principal)
     {
-        // get the currently logged in username
         String userName = principal.getName();
-        // find database user by username
         User user = userService.getByUserName(userName);
         int userId = user.getId();
-
-        // use the shoppingCartService to get all items in the cart and return the cart
-        return null;
+        return shoppingCartService.getByUserId(userId);
     }
 
     // add a POST method to add a product to the cart - the url should be
