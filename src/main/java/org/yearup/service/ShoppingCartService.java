@@ -34,10 +34,24 @@ public class ShoppingCartService
             item.setQuantity(cartItem.getQuantity());
             cart.add(item);
         }
-
         return cart;
     }
 
     // add additional methods here
+    public ShoppingCart addToCart(int userId, int productId){
+    CartItem items = shoppingCartRepository.findByUserIdAndProductId(userId, productId);
+    if (items == null){
+
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(productId);
+        cartItem.setUserId(userId);
+        cartItem.setQuantity(1);
+        shoppingCartRepository.save(cartItem);
+    } else if (items != null) {
+        items.setQuantity(items.getQuantity() + 1);
+        shoppingCartRepository.save(items);
+    }
+        return getByUserId(userId);
+    }
 
 }

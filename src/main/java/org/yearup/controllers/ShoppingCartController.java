@@ -1,11 +1,10 @@
 package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.User;
 import org.yearup.service.CategoryService;
@@ -33,8 +32,7 @@ public class ShoppingCartController
 
     // each method in this controller requires a Principal object as a parameter
     @GetMapping
-    public ShoppingCart getCart(Principal principal)
-    {
+    public ShoppingCart getCart(Principal principal) {
         String userName = principal.getName();
         User user = userService.getByUserName(userName);
         int userId = user.getId();
@@ -42,6 +40,14 @@ public class ShoppingCartController
     }
 
     // add a POST method to add a product to the cart - the url should be
+    @PostMapping("/products/{id}")
+    public ResponseEntity<ShoppingCart> addToCart(Principal principal, @PathVariable("id") int productId){
+        String userName = principal.getName();
+        User user = userService.getByUserName(userName);
+        int userId = user.getId();
+        ShoppingCart saved = shoppingCartService.addToCart(userId, productId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
     // https://localhost:8080/cart/products/15  (15 is the productId to be added)
     // return the updated cart with status 201 Created
 
