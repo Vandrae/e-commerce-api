@@ -52,11 +52,8 @@ public class ShoppingCartController
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    // add a PUT method to update an existing product in the cart - the url should be
-    // https://localhost:8080/cart/products/15  (15 is the productId to be updated)
-    // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated; return the cart (200 OK)
-    @PutMapping("/{id}")
-    public ShoppingCartItem editCart(Principal principal, @PathVariable("id") int productId,
+    @PutMapping("/products/{id}")
+    public ShoppingCart editCart(Principal principal, @PathVariable("id") int productId,
                                      @RequestBody ShoppingCartItem shoppingCartItem){
         String userName = principal.getName();
         User user = userService.getByUserName(userName);
@@ -64,7 +61,7 @@ public class ShoppingCartController
         int quantity = shoppingCartItem.getQuantity();
         if (shoppingCartService.getByUserId(userId) == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        return shoppingCartService.update(principal, productId, quantity);
+        return shoppingCartService.update(userId, productId, quantity);
     }
 
     // add a DELETE method to clear all products from the current users cart
